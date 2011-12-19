@@ -123,10 +123,12 @@ EOT;
                 'ip' => $_SERVER['REMOTE_ADDR'],
                 'vote' => $row['id']);
 
-            //$vote_user = $db->selectOne('vote_user', null, $search);
-            $vote_user = '';
+            $vote_user = $db->selectOne('vote_user', null, $search);
+            
+            //$vote_user = '';
             // user has not voted
             if (empty($vote_user)) {
+                
                 
                 // insert
                 $res = $db->insert('vote_user', $search);
