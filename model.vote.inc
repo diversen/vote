@@ -169,4 +169,13 @@ EOT;
         } 
         die;
     }
+    
+    /**
+     * method for initing a vote field in table with a 0 value
+     */
+    public static function init ($reference, $parent_id) {
+        $db = new db();
+        $values = array ('reference' => $reference, 'parent_id' => $parent_id, 'vote' => '0');
+        $row = $db->insert('vote', $values);
+    }
 }
