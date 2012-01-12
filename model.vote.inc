@@ -10,8 +10,8 @@
  * set assets of voting system
  * @ignore
  */
-template::setInlineCss(get_module_path('vote') . '/assets/vote.css');
-template::setInlineJs(get_module_path('vote') . '/assets/vote.js');
+template::setInlineCss(config::getModulePath('vote') . '/assets/vote.css');
+template::setInlineJs(config::getModulePath('vote') . '/assets/vote.js');
 
 /**
  * Class vote for using vote. Easy to implemet as a submodule
