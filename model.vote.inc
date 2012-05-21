@@ -45,6 +45,7 @@ EOT;
      */
     
     public static function ajaxEvent ($args) {
+        //print_r($args); die;
         $db = new db();
         $search = array ('reference' => $args['reference'], 'parent_id' => $args['parent_id']);
         $row = $db->selectOne('vote', null, $search);
