@@ -44,7 +44,7 @@ EOT;
      * @return string $str html buttons for voting 
      */
     
-    public static function ajaxEvent ($args) {
+    public static function getButtons ($args) {
         //print_r($args); die;
         $db = new db();
         $search = array ('reference' => $args['reference'], 'parent_id' => $args['parent_id']);
@@ -55,7 +55,6 @@ EOT;
         } else {
             $args['vote'] = $row['vote'];
         }
-        
         return self::buttons($args['parent_id'], $args['reference'], $args['vote']);
     }
     
@@ -76,6 +75,14 @@ EOT;
             $count = $row['vote'];
         }       
         return self::buttons($options['parent_id'], $options['reference'], $count);
+    }
+    
+    function events ($args) {
+        if ($args['action'] == 'view') {
+             return self::getButtons($args);
+        }
+        return true;
+        
     }
 
     /**
