@@ -78,8 +78,12 @@ EOT;
     }
     
     function events ($args) {
+
         if ($args['action'] == 'view') {
              return self::getButtons($args);
+        }
+        if ($args['action'] == 'get') {
+            return self::getButtons($args);
         }
         return true;
         
