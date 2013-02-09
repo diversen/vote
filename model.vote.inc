@@ -121,7 +121,7 @@ EOT;
                 $row['vote'] = 0;
                 $res = $db->insert('vote', $row);
                 if (!$res) { 
-                    cos_error_log("Could not use vote with values" . var_export ($values));        
+                    log::error("Could not use vote with values" . var_export ($values));        
                     echo "Something went wrong - your vote was not accepted";
                     die;
                 }
@@ -145,7 +145,7 @@ EOT;
                 // insert
                 $res = $db->insert('vote_user', $search);
                 if (!$res) {
-                    cos_error_log("Could not insert into vote_user: " . var_export ($vote_user));
+                    log::error("Could not insert into vote_user: " . var_export ($vote_user));
                     echo "Could not register your vote";
                     die;
                 }
@@ -177,7 +177,7 @@ EOT;
         $res = db::$dbh->commit();
         if (!$res) {
             db::$dbh->rollback();
-            cos_error_log('Could not commit');
+            log::error('Could not commit');
         } 
         die;
     }
