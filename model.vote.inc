@@ -29,8 +29,8 @@ class vote {
      */
     public static function buttons ($parent_id, $reference, $count) {
         $str = <<<EOT
-<button type="submit" value="$parent_id-$reference" class="up"></button>
-<button type="submit" value="$parent_id-$reference" class="down"></button>
+<button type="submit" value="$parent_id-$reference" class="vote_up"></button>
+<button type="submit" value="$parent_id-$reference" class="vote_down"></button>
 <span id="$parent_id-$reference" class = "vote_response">
         $count
 </span>    
@@ -98,7 +98,7 @@ EOT;
 
         $id=$_POST['id'];
         $ary = explode('-', $id);
-        $parent_id = $ary[0];
+        //$parent_id = $ary[0];
         $reference = $ary[1];
         
         // Could make better check, but ok for now. 
