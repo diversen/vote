@@ -77,7 +77,7 @@ EOT;
         return self::buttons($options['parent_id'], $options['reference'], $count);
     }
     
-    function events ($args) {
+    public static function events ($args) {
 
         if ($args['action'] == 'view') {
              return self::getButtons($args);
