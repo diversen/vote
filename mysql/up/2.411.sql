@@ -1,0 +1,1 @@
+ALTER table vote_user DROP column `ip`;

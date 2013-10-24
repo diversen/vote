@@ -98,13 +98,11 @@ EOT;
 
         $id=$_POST['id'];
         $ary = explode('-', $id);
-        //$parent_id = $ary[0];
         $reference = $ary[1];
         
         // Could make better check, but ok for now. 
         $final_res = false;
         if (isset($id, $reference)) {
-
             $db = new db();
             db::$dbh->beginTransaction();
 
@@ -121,33 +119,30 @@ EOT;
                 $row['vote'] = 0;
                 $res = $db->insert('vote', $row);
                 if (!$res) { 
-                    log::error("Could not use vote with values" . var_export ($values));        
-                    echo "Something went wrong - your vote was not accepted";
-                    die;
+                    die('Vote: Could not save to DB');
                 }
-
                 $row['id'] = db::$dbh->lastInsertId();
             }
+                
+            if (!session::getUserId()) {
+                $link = html::createLink("/account/index", lang::translate('Login'));
+                echo $row['vote'] . ' ';
+                echo lang::translate('<span class="notranslate">{LOGIN_LINK}</span> to vote ', array ('LOGIN_LINK' => $link));
+                die();
+            } 
 
-            // we have a vote
-            // check if user has voted
             $search = array (
-                'ip' => $_SERVER['REMOTE_ADDR'],
-                'vote' => $row['id']);
+                 'user_id' => session::getUserId(),
+                 'vote' => $row['id']
+            );
 
             $vote_user = $db->selectOne('vote_user', null, $search);
-            
-            //$vote_user = '';
-            // user has not voted
             if (empty($vote_user)) {
-                
-                
+                       
                 // insert
                 $res = $db->insert('vote_user', $search);
                 if (!$res) {
-                    log::error("Could not insert into vote_user: " . var_export ($vote_user));
-                    echo "Could not register your vote";
-                    die;
+                    log::error('Vote: Could not save to DB');
                 }
 
                 // update vote table
