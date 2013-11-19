@@ -8,25 +8,26 @@ $(document).ready(function(){
     var voteUpScript='/vote/up';
 
     // vote up
-     $("button.vote_up").click(function(){ // when people click an up button
+     $("button.vote_up").on('click', function(e){ // when people click an up button
             //$("span#response").show().html('Voting, please wait...'); // show wait message
-
+            e.preventDefault();
             itemID=$(this).val(); // get post id
             $.post(voteUpScript,{id:itemID},function(response){ // post to up script
                     $("span#" + itemID).html(response).show(); // show response
             });
-
+            return false;
             //$(this).attr({"disabled":"disabled"}); // disable button
      });
 
      // vote down
-     $("button.vote_down").click(function(){
+     $("button.vote_down").on('click', function(e){
             //$("span#response").show().html('voting, please wait.. ');
-
+            e.preventDefault();
             itemID=$(this).val();
             $.post(voteDownScript,{id:itemID},function(response){ // post to down script
                     $("span#" + itemID).html(response).show();// show response
             });
+            return false;
             //$(this).attr({"disabled":"disabled"}); // disable button
 
     });                
