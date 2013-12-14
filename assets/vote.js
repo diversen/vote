@@ -8,7 +8,7 @@ $(document).ready(function(){
     var voteUpScript='/vote/up';
 
     // vote up
-     $("button.vote_up").on('click', function(e){ // when people click an up button
+     $(document).on('click',"button.vote_up", function(e){ // when people click an up button
             //$("span#response").show().html('Voting, please wait...'); // show wait message
             e.preventDefault();
             itemID=$(this).val(); // get post id
@@ -20,7 +20,7 @@ $(document).ready(function(){
      });
 
      // vote down
-     $("button.vote_down").on('click', function(e){
+     $(document).on('click', "button.vote_down", function(e){
             //$("span#response").show().html('voting, please wait.. ');
             e.preventDefault();
             itemID=$(this).val();
