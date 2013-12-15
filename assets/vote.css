@@ -10,7 +10,7 @@ button {
 }*/
 
 
-.vote_up {
+.vote_up, .vote_up_dummy {
     background:url(/images/up.gif) no-repeat;
     cursor:pointer;
     height: 25px;
@@ -18,7 +18,7 @@ button {
     border: none;
 }
 
-.vote_down {
+.vote_down, .vote_down_dummy {
     background:url(/images/down.gif) no-repeat;
     cursor:pointer;
     height: 25px;

@@ -28,13 +28,43 @@ class vote {
      * @return type 
      */
     public static function buttons ($parent_id, $reference, $count) {
-        $str = <<<EOT
-<button type="submit" value="$parent_id-$reference" class="vote_up"></button>
-<button type="submit" value="$parent_id-$reference" class="vote_down"></button>
+        //$login = '';
+        //echo 
+        if (!session::isUser()) {
+            $return_to = rawurlencode($_SERVER['REQUEST_URI']);
+            $return_to.= rawurlencode("#vote-$reference-$parent_id");
+            $return_to = "/account/index?return_to=$return_to";
+            //$link = html::createLink(
+            //        "/account/index?return_to=$return_to", 
+            //        lang::translate('Login'));
+            //$login = lang::translate('<span class="notranslate">{LOGIN_LINK}</span> to vote ', array ('LOGIN_LINK' => $link));
+            //$login.=$parent_id; 
+            $extra =  array (
+                //'disabled' => 'disabled',
+                'title' => lang::translate('In order to vote you need to log in. Press vote button and you will go to the log in page. After log in you will return here.'));
+            $extra = html::parseExtra($extra);
+            
+            $str = <<<EOT
+<form method="post" action="{$return_to}">
+<a id = "vote-$reference-$parent_id"></a>
+<button type="submit" value="" class="vote_down_dummy" $extra></button>
+<button type="submit" value="" class="vote_up_dummy" $extra></button>
 <span id="$parent_id-$reference" class = "vote_response">
         $count
-</span>    
+</span> 
+</form>
 EOT;
+        } else {
+            $extra = '';
+            
+            $str = <<<EOT
+<a id = "vote-$reference-$parent_id"></a>
+<button type="submit" value="$parent_id-$reference" class="vote_up" $extra></button>
+<button type="submit" value="$parent_id-$reference" class="vote_down" $extra></button>
+<span id="$parent_id-$reference" class = "vote_response">$count</span>    
+EOT;
+        }
+
         return $str;
     }
     
@@ -118,16 +148,13 @@ EOT;
                 $row['reference'] = (string)$reference;
                 $row['vote'] = 0;
                 $res = $db->insert('vote', $row);
-                if (!$res) { 
-                    die('Vote: Could not save to DB');
-                }
                 $row['id'] = db::$dbh->lastInsertId();
             }
                 
             if (!session::getUserId()) {
-                $link = html::createLink("/account/index", lang::translate('Login'));
-                echo $row['vote'] . ' ';
-                echo lang::translate('<span class="notranslate">{LOGIN_LINK}</span> to vote ', array ('LOGIN_LINK' => $link));
+                //$link = html::createLink("/account/index", lang::translate('Login'));
+                //echo $row['vote'] . ' ';
+                //echo lang::translate('<span class="notranslate">{LOGIN_LINK}</span> to vote ', array ('LOGIN_LINK' => $link));
                 die();
             } 
 
@@ -141,9 +168,6 @@ EOT;
                        
                 // insert
                 $res = $db->insert('vote_user', $search);
-                if (!$res) {
-                    log::error('Vote: Could not save to DB');
-                }
 
                 // update vote table
                 $vote = array();
@@ -172,7 +196,6 @@ EOT;
         $res = db::$dbh->commit();
         if (!$res) {
             db::$dbh->rollback();
-            log::error('Could not commit');
         } 
         die;
     }
