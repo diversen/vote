@@ -58,7 +58,7 @@ EOT;
             $extra = '';
             
             $str = <<<EOT
-<a id = "vote-$reference-$parent_id"></a>
+<a id="vote-$reference-$parent_id"></a>
 <button type="submit" value="$parent_id-$reference" class="vote_up" $extra></button>
 <button type="submit" value="$parent_id-$reference" class="vote_down" $extra></button>
 <span id="$parent_id-$reference" class = "vote_response">$count</span>    
@@ -75,7 +75,6 @@ EOT;
      */
     
     public static function getButtons ($args) {
-        //print_r($args); die;
         $db = new db();
         $search = array ('reference' => $args['reference'], 'parent_id' => $args['parent_id']);
         $row = $db->selectOne('vote', null, $search);
