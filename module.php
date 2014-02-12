@@ -179,7 +179,10 @@ EOT;
                 // update reference table
                 $res = $db->update('vote', $vote, $row['id']);
                 if ($db->fieldExists($row['reference'], 'vote')) {
-                    $res = $db->update($row['reference'], $vote, array('id' => $row['parent_id']));
+                    $res = $db->update(
+                            $row['reference'], 
+                            $vote, 
+                            array('id' => $row['parent_id']));
                 }
                                 
                 if ($res) {
@@ -204,7 +207,10 @@ EOT;
      */
     public static function init ($reference, $parent_id) {
         $db = new db();
-        $values = array ('reference' => $reference, 'parent_id' => $parent_id, 'vote' => '0');
+        $values = array (
+            'reference' => $reference, 
+            'parent_id' => $parent_id, 
+            'vote' => '0');
         $row = $db->insert('vote', $values);
     }
 }
