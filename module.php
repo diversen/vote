@@ -34,6 +34,11 @@ class vote {
             $return_to = rawurlencode($_SERVER['REQUEST_URI']);
             $return_to.= rawurlencode("#vote-$reference-$parent_id");
             $return_to = "/account/index?return_to=$return_to";
+            
+            if (isset($_POST['vote_redirect'])) {    
+                http::locationHeader($return_to, lang::translate('Please login in order to make a vote'));
+            }
+            
             //$link = html::createLink(
             //        "/account/index?return_to=$return_to", 
             //        lang::translate('Login'));
@@ -45,10 +50,11 @@ class vote {
             $extra = html::parseExtra($extra);
             
             $str = <<<EOT
-<form method="post" action="{$return_to}">
+<form method="post" action="#!">
+<input type="hidden" name ="vote_redirect" value="1"
 <a id = "vote-$reference-$parent_id"></a>
-<button type="submit" value="" class="vote_down_dummy" $extra></button>
 <button type="submit" value="" class="vote_up_dummy" $extra></button>
+<button type="submit" value="" class="vote_down_dummy" $extra></button>
 <span id="$parent_id-$reference" class = "vote_response">
         $count
 </span> 
