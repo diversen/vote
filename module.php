@@ -31,9 +31,9 @@ class vote {
         //$login = '';
         //echo 
         if (!session::isUser()) {
-            $return_to = rawurlencode($_SERVER['REQUEST_URI']);
-            $return_to.= rawurlencode("#vote-$reference-$parent_id");
-            $return_to = "/account/index?return_to=$return_to";
+             $return_to = rawurlencode($_SERVER['REQUEST_URI']);
+             $return_to.= rawurlencode("#vote-$reference-$parent_id");
+             $return_to = "/account/index?return_to=$return_to";
             
             if (isset($_POST['vote_redirect'])) {    
                 http::locationHeader($return_to, lang::translate('Please login in order to make a vote'));
