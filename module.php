@@ -1,5 +1,6 @@
 <?php
 
+use diversen\db\admin as db_admin;
 /**
  * File which holds all logic of the voting system
  * @see /vote/assets/vote.js for the ajax javascript
