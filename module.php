@@ -11,8 +11,8 @@ use diversen\db\admin as db_admin;
  * set assets of voting system
  * @ignore
  */
-template::setInlineCss(config::getModulePath('vote') . '/assets/vote.css');
-template::setInlineJs(config::getModulePath('vote') . '/assets/vote.js');
+template::setInlineCss(conf::getModulePath('vote') . '/assets/vote.css');
+template::setInlineJs(conf::getModulePath('vote') . '/assets/vote.js');
 
 /**
  * Class vote for using vote. Easy to implemet as a submodule
