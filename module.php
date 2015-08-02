@@ -1,6 +1,13 @@
 <?php
 
-use diversen\db\admin as db_admin;
+use diversen\conf;
+use diversen\db;
+use diversen\html;
+use diversen\http;
+use diversen\lang;
+use diversen\session;
+use diversen\template;
+
 /**
  * File which holds all logic of the voting system
  * @see /vote/assets/vote.js for the ajax javascript
@@ -123,6 +130,20 @@ EOT;
         }
         return true;
         
+    }
+    
+    public function upAction() {
+        if (!session::isUser()) {
+            return;
+        }
+        $this->ajaxVote('up');
+    }
+
+    public function downAction() {
+        if (!session::isUser()) {
+            return;
+        }
+        $this->ajaxVote('down');
     }
 
     /**
