@@ -218,7 +218,7 @@ EOT;
                 }
             // has voted - show table value. 
             } else {
-                echo $row['vote'] . ' ' . lang::translate('vote_user_has_voted');
+                echo $row['vote'] . ' ' . lang::translate('You have voted!');
             }
         }
 
