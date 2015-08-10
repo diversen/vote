@@ -3,7 +3,6 @@
 use diversen\conf;
 use diversen\db;
 use diversen\html;
-use diversen\http;
 use diversen\lang;
 use diversen\session;
 use diversen\template;
@@ -36,22 +35,16 @@ class vote {
      * @return type 
      */
     public static function buttons ($parent_id, $reference, $count) {
-        //$login = '';
-        //echo 
         if (!session::isUser()) {
              $return_to = rawurlencode($_SERVER['REQUEST_URI']);
              $return_to.= rawurlencode("#vote-$reference-$parent_id");
              $return_to = "/account/index?return_to=$return_to";
             
             if (isset($_POST['vote_redirect'])) {    
-                http::locationHeader($return_to, lang::translate('Please login in order to make a vote'));
+
+                session::loginThenRedirect(lang::translate('Please login in order to make a vote'));
             }
-            
-            //$link = html::createLink(
-            //        "/account/index?return_to=$return_to", 
-            //        lang::translate('Login'));
-            //$login = lang::translate('<span class="notranslate">{LOGIN_LINK}</span> to vote ', array ('LOGIN_LINK' => $link));
-            //$login.=$parent_id; 
+
             $extra =  array (
                 //'disabled' => 'disabled',
                 'title' => lang::translate('In order to vote you need to log in. Press vote button and you will go to the log in page. After log in you will return here.'));
