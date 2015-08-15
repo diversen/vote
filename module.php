@@ -1,5 +1,7 @@
 <?php
 
+namespace modules\vote;
+
 use diversen\conf;
 use diversen\db;
 use diversen\html;
@@ -7,16 +9,6 @@ use diversen\lang;
 use diversen\session;
 use diversen\template;
 
-/**
- * File which holds all logic of the voting system
- * @see /vote/assets/vote.js for the ajax javascript
- * @package vote
- */
-
-/**
- * set assets of voting system
- * @ignore
- */
 template::setInlineCss(conf::getModulePath('vote') . '/assets/vote.css');
 template::setInlineJs(conf::getModulePath('vote') . '/assets/vote.js');
 
@@ -25,7 +17,7 @@ template::setInlineJs(conf::getModulePath('vote') . '/assets/vote.js');
  * in other modules. For an example se the module comment
  * @package vote
  */
-class vote {
+class module {
     
     /**
      * display buttons for voting. 
@@ -54,8 +46,8 @@ class vote {
 <form method="post" action="#!">
 <input type="hidden" name ="vote_redirect" value="1"
 <a id = "vote-$reference-$parent_id"></a>
-<button type="submit" value="" class="vote_up_dummy" $extra></button>
-<button type="submit" value="" class="vote_down_dummy" $extra></button>
+<button type="submit" value="" class="vote_up_dummy" $extra><i class="fa fa-arrow-up"></i></button>
+<button type="submit" value="" class="vote_down_dummy" $extra><i class="fa fa-arrow-down"></i></button>
 <span id="$parent_id-$reference" class = "vote_response">
         $count
 </span> 
@@ -66,8 +58,8 @@ EOT;
             
             $str = <<<EOT
 <a id="vote-$reference-$parent_id"></a>
-<button type="submit" value="$parent_id-$reference" class="vote_up" $extra></button>
-<button type="submit" value="$parent_id-$reference" class="vote_down" $extra></button>
+<button type="submit" value="$parent_id-$reference" class="vote_up" $extra><i class="fa fa-arrow-up"></i></button>
+<button type="submit" value="$parent_id-$reference" class="vote_down" $extra><i class="fa fa-arrow-down"></i></button>
 <span id="$parent_id-$reference" class = "vote_response">$count</span>    
 EOT;
         }
@@ -114,7 +106,6 @@ EOT;
     }
     
     public static function events ($args) {
-
         if ($args['action'] == 'view') {
              return self::getButtons($args);
         }
