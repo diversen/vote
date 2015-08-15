@@ -33,7 +33,6 @@ class module {
              $return_to = "/account/index?return_to=$return_to";
             
             if (isset($_POST['vote_redirect'])) {    
-
                 session::loginThenRedirect(lang::translate('Please login in order to make a vote'));
             }
 
