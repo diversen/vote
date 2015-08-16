@@ -45,8 +45,8 @@ class module {
 <form method="post" action="#!">
 <input type="hidden" name ="vote_redirect" value="1"
 <a id = "vote-$reference-$parent_id"></a>
-<button type="submit" value="" class="vote_up_dummy" $extra><i class="fa fa-arrow-up"></i></button>
-<button type="submit" value="" class="vote_down_dummy" $extra><i class="fa fa-arrow-down"></i></button>
+<button type="submit" value="" class="vote_up_dummy" $extra><i class="fa fa-thumbs-up"></i></button>
+<button type="submit" value="" class="vote_down_dummy" $extra><i class="fa fa-thumbs-down"></i></button>
 <span id="$parent_id-$reference" class = "vote_response">
         $count
 </span> 
@@ -57,8 +57,8 @@ EOT;
             
             $str = <<<EOT
 <a id="vote-$reference-$parent_id"></a>
-<button type="submit" value="$parent_id-$reference" class="vote_up" $extra><i class="fa fa-arrow-up"></i></button>
-<button type="submit" value="$parent_id-$reference" class="vote_down" $extra><i class="fa fa-arrow-down"></i></button>
+<button type="submit" value="$parent_id-$reference" class="vote_up" $extra><i class="fa fa-thumbs-up"></i></button>
+<button type="submit" value="$parent_id-$reference" class="vote_down" $extra><i class="fa fa-thumbs-down"></i></button>
 <span id="$parent_id-$reference" class = "vote_response">$count</span>    
 EOT;
         }
