@@ -37,7 +37,6 @@ class module {
             }
 
             $extra =  array (
-                //'disabled' => 'disabled',
                 'title' => lang::translate('In order to vote you need to log in. Press vote button and you will go to the log in page. After log in you will return here.'));
             $extra = html::parseExtra($extra);
             
@@ -84,37 +83,26 @@ EOT;
         }
         return self::buttons($args['parent_id'], $args['reference'], $args['vote']);
     }
+
     
-   
     /**
-     * method for enabling the vote system as a submodule. 
-     * @param array $options array ('parent_id' => 'parent_id', 'reference' => 'reference');
-     * @return string $str html voting buttons
+     * A wrapper for fetching the vote HTML
+     * @param array $args 
+     * @return void
      */
-    public static function subModulePreContent ($options) {
-        $db = new db();
-        $search = array ('reference' => $options['reference'], 'parent_id' => $options['parent_id']);
-        $row = $db->selectOne('vote', null, $search);
-        
-        if (empty($row)) { 
-            $count = 0;
-        } else {
-            $count = $row['vote'];
-        }       
-        return self::buttons($options['parent_id'], $options['reference'], $count);
-    }
-    
     public static function events ($args) {
         if ($args['action'] == 'view') {
              return self::getButtons($args);
         }
         if ($args['action'] == 'get') {
             return self::getButtons($args);
-        }
-        return true;
-        
+        }        
     }
     
+    /**
+     * /vote/up action
+     * @return void
+     */
     public function upAction() {
         if (!session::isUser()) {
             return;
@@ -122,106 +110,119 @@ EOT;
         $this->ajaxVote('up');
     }
 
+    /**
+     * /vote/down action
+     * @return void
+     */
     public function downAction() {
         if (!session::isUser()) {
             return;
         }
         $this->ajaxVote('down');
     }
+    
+    /**
+     * get row base  on parent_id and reference
+     * @param int $id
+     * @param string $reference
+     * @return array $row
+     */
+    public function getVoteRow($id, $reference) {
+        $db = new db();
+        
+        // Check if there a vote corresponding to 
+        // the reference and the parent_id
+        $search = array('reference' => $reference, 'parent_id' => $id);
+        $row = $db->selectOne('vote', null, $search);
+
+        // No row. Create one
+        if (empty($row)) {
+            $row['parent_id'] = $id;
+            $row['reference'] = $reference;
+            $row['vote'] = 0;
+            $db->insert('vote', $row);
+            $row['id'] = db::$dbh->lastInsertId();
+        }
+        return $row;
+    }
 
     /**
-     * method for handling ajax votes
-     * se /vote/up.php and /vote/down.php
+     * Method for handling ajax votes
+     * Access controlled in upAction and downAction
      * @param string $direction up or down 
      */
-    public static function ajaxVote($direction = 'up') {
-
-        $id=$_POST['id'];
-        $ary = explode('-', $id);
-        $reference = $ary[1];
+    public function ajaxVote($direction = 'up') {
         
-        // Could make better check, but ok for now. 
-        $final_res = false;
+        $ary = explode('-', $_POST['id']);
+        if (!isset($ary[0]) OR !isset($ary[1])) {
+            log::error('Wrong ID given to wote system');
+            return;
+        }
+        
+        $reference = (string)$ary[1];
+        $id = (int)$ary[0];
+
         if (isset($id, $reference)) {
             $db = new db();
             db::$dbh->beginTransaction();
-
-            // check if user has voted
-            $search = array ('reference' => $reference, 'parent_id' => $id);
-            $row = $db->selectOne('vote', null, $search);
-
-            // no row with this reference and this parent_id
-            // create row
-            if (empty($row)) {
-
-                $row['parent_id'] = (int)$id;
-                $row['reference'] = (string)$reference;
-                $row['vote'] = 0;
-                $res = $db->insert('vote', $row);
-                $row['id'] = db::$dbh->lastInsertId();
-            }
-                
-            if (!session::getUserId()) {
-                //$link = html::createLink("/account/index", lang::translate('Login'));
-                //echo $row['vote'] . ' ';
-                //echo lang::translate('<span class="notranslate">{LOGIN_LINK}</span> to vote ', array ('LOGIN_LINK' => $link));
-                die();
-            } 
-
-            $search = array (
-                 'user_id' => session::getUserId(),
-                 'vote' => $row['id']
-            );
-
-            $vote_user = $db->selectOne('vote_user', null, $search);
-            if (empty($vote_user)) {
-                       
-                // insert
-                $res = $db->insert('vote_user', $search);
-
-                // update vote table
-                $vote = array();
-                if ($direction == 'up') {
-                    $vote['vote'] = $row['vote'] +1;
-                } else {
-                    $vote['vote'] = $row['vote'] -1;
-                }
-
-                // update reference table
-                $res = $db->update('vote', $vote, $row['id']);
-                if ($db->fieldExists($row['reference'], 'vote')) {
-                    $res = $db->update(
-                            $row['reference'], 
-                            $vote, 
-                            array('id' => $row['parent_id']));
-                }
-                                
-                if ($res) {
-                    echo $vote['vote'];
-                }
-            // has voted - show table value. 
-            } else {
-                echo $row['vote'] . ' ' . lang::translate('You have voted!');
-            }
+            $row = $this->getVoteRow($id, $reference);
+            
+            $result = $this->doVote($direction, $row);
         }
 
         // commit or rollback
-        $res = db::$dbh->commit();
-        if (!$res) {
+        $commit = db::$dbh->commit();
+        if (!$commit) {
             db::$dbh->rollback();
-        } 
+            log::error("Vote: commit");
+            echo lang::translate('Something went wrong! Try again later');
+        } else {
+            echo $result;
+        }
         die;
     }
     
     /**
-     * method for initing a vote field in table with a 0 value
+     * 
+     * @param string $direction up or down
+     * @param array $row vote row
+     * @return string $str string with result to echo back to user
      */
-    public static function init ($reference, $parent_id) {
+    public function doVote($direction, $row) {
+        
+        // Check if user has voted
         $db = new db();
-        $values = array (
-            'reference' => $reference, 
-            'parent_id' => $parent_id, 
-            'vote' => '0');
-        $row = $db->insert('vote', $values);
+        $search = array(
+            'user_id' => session::getUserId(),
+            'vote' => $row['id']
+        );
+
+        $vote_user = $db->selectOne('vote_user', null, $search);
+        if (empty($vote_user)) {
+
+            // insert
+            $db->insert('vote_user', $search);
+
+            // update vote table
+            $vote = array();
+            if ($direction == 'up') {
+                $vote['vote'] = $row['vote'] + 1;
+            } else {
+                $vote['vote'] = $row['vote'] - 1;
+            }
+
+            // update reference table
+            $db->update('vote', $vote, $row['id']);
+            if ($db->fieldExists($row['reference'], 'vote')) {
+                $db->update(
+                        $row['reference'], $vote, array('id' => $row['parent_id']));
+            }
+
+            return $vote['vote'];
+
+            // has voted - show table value. 
+        } else {
+            return $row['vote'] . ' ' . lang::translate('You have voted!');
+        }
     }
 }
