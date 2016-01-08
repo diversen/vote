@@ -8,9 +8,10 @@ use diversen\html;
 use diversen\lang;
 use diversen\session;
 use diversen\template;
+use diversen\template\assets;
 
-template::setInlineCss(conf::getModulePath('vote') . '/assets/vote.css');
-template::setInlineJs(conf::getModulePath('vote') . '/assets/vote.js');
+assets::setInlineCss(conf::getModulePath('vote') . '/assets/vote.css');
+assets::setInlineJs(conf::getModulePath('vote') . '/assets/vote.js');
 
 /**
  * Class vote for using vote. Easy to implemet as a submodule
